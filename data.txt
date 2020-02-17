@@ -1,0 +1,96 @@
+package com.example.nccdemo;
+
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.widget.Toast;
+
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+public class DataCode extends BaseObservable {
+    private String address;
+    private String amount;
+    private Bitmap qr_code;
+    private Bitmap bar_code;
+
+    public DataCode(String address, String amount, Bitmap qr_code, Bitmap bar_code) {
+        this.address = address;
+        this.amount = amount;
+        this.qr_code = qr_code;
+        this.bar_code = bar_code;
+    }
+
+    @Bindable
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+
+        notifyPropertyChanged(BR.address);
+    }
+
+    @Bindable
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+        convertStringToBitmap("BAR_CODE");
+        convertStringToBitmap("QR_CODE");
+        notifyPropertyChanged(BR.amount);
+    }
+
+    @Bindable
+    public Bitmap getQr_code() {
+        return qr_code;
+    }
+
+    public void setQr_code(Bitmap qr_code) {
+        this.qr_code = qr_code;
+        notifyPropertyChanged(BR.qr_code);
+    }
+
+    @Bindable
+    public Bitmap getBar_code() {
+        return bar_code;
+    }
+
+    public void setBar_code(Bitmap bar_code) {
+        this.bar_code = bar_code;
+        notifyPropertyChanged(BR.bar_code);
+    }
+
+    private synchronized void convertStringToBitmap(String type) {
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        try {
+            BitMatrix bitMatrix;
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            if (type == "BAR_CODE") {
+                if (!getAmount().equals("")) {
+                    bitMatrix = multiFormatWriter.encode(getAmount(), BarcodeFormat.CODE_128, 1000, 200);
+                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                    setBar_code(bitmap);
+                }
+
+            } else if (type == "QR_CODE") {
+                if (!getAmount().equals("")) {
+                    bitMatrix = multiFormatWriter.encode(getAmount(), BarcodeFormat.QR_CODE, 1000, 1000);
+                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                    setQr_code(bitmap);
+                }
+
+            }
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+    }
+}
