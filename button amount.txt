@@ -1,0 +1,12 @@
+ binding.getRoot().findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText inputAmount = binding.getRoot().findViewById(R.id.et_amount);
+                inputAmount.requestFocus();
+                inputAmount.setFocusableInTouchMode(true);
+                inputAmount.getText().clear();
+
+                InputMethodManager imm = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(inputAmount, InputMethodManager.SHOW_FORCED);
+            }
+        });
